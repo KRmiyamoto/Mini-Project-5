@@ -1,3 +1,8 @@
+/**
+ * Class to keep track of the complete set of AAC mappings.
+ * @author Keely Miyamoto
+ */
+
 import java.util.*;
 
 import structures.AssociativeArray;
@@ -25,15 +30,15 @@ public class AACMappings {
   } // add(String, String)
 
   String getCurrentCategory() {
-    return "Not yet implemented"; // STUB
+    return "food";  // STUB
   } // getCurrentCategory()
 
-  String getImageLoc() {
-    return "Not yet implemented"; // STUB
+  String[] getImageLocs() {
+    return new String[] { "img/food/icons8-french-fries-96.png", "img/food/icons8-watermelon-96.png" }; // STUB
   } // getImageLoc()
 
   String getText(String imageLoc) {
-    return "Not yet implemented";    // STUB
+    return "television";  // STUB
   } // getText(String)
 
   boolean isCategory(String imageLoc) {
