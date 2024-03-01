@@ -1,45 +1,73 @@
 /**
- * Class to represent single categories of AAC items. Stores mapping between the 
- * image location and the text that should be spoken and the name of the category.
+ * Class to represent single categories of AAC items. Stores mappings between the 
+ * image locations and the text that should be spoken, as well as the name of the category.
  * 
  * @author Keely Miyamoto
  */
-
-import java.util.*;
-
 import structures.AssociativeArray;
 import structures.KeyNotFoundException;
 import structures.NullKeyException;
 
-import static java.lang.reflect.Array.newInstance;
-
 public class AACCategory {
   // Fields
   AssociativeArray<String, String> itemMappings;
+  String categoryName;
 
   // Constructors
-  public AACCategory() {
+  public AACCategory(String name) {
     this.itemMappings = new AssociativeArray<String, String>();
-  } // AACCategory()
+    this.categoryName = name;
+  } // AACCategory(String)
 
   // Methods
+  /**
+   * Adds the mapping of the imageLoc to the text to the category.
+   * @param imageLoc - the location of the image to add
+   * @param text - the text that image maps to
+   */
   void addItem(String imageLoc, String text) {
-    // STUB
+    try {
+      this.itemMappings.set(imageLoc, text);
+    } catch (NullKeyException n) {
+      throw new Error("The Image Location cannot be null.");
+    }
   } // addItem(String, String)
 
+  /**
+   * Returns the name of the category
+   * @return - category name
+   */
   String getCategory() {
-    return "food";  // STUB
+    return this.categoryName;
   } // getCategory()
 
+  /**
+   * Returns an array of all the images in the category
+   * @return - an array of image locations
+   */
   String[] getImages() {
-    return new String[] { "img/food/icons8-french-fries-96.png", "img/food/icons8-watermelon-96.png" }; // STUB
+    return this.itemMappings.getAllKeys();
   } // getImages()
 
+  /**
+   * Returns the text associated with the given image loc in this category
+   * @param imageLoc - the location of the image
+   * @return - the text associated with the image
+   */
   String getText(String imageLoc) {
-    return "television";  // STUB
+    try {
+      return this.itemMappings.get(imageLoc);
+    } catch (KeyNotFoundException k) {
+      throw new Error("Image not found in " + this.getCategory());
+    }
   } // getText(String)
 
+  /**
+   * Determines if the provided images is stored in the category
+   * @param imageLoc - the location of the category
+   * @return - true if the provided images is stored in the category; false otherwise.
+   */
   boolean hasImage(String imageLoc) {
-    return false;    // STUB
+    return this.itemMappings.hasKey(imageLoc);
   } // hasImage(String)
 } // AACCategory

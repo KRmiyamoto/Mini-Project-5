@@ -190,6 +190,19 @@ public class AssociativeArray<K, V> {
     return this.size;
   } // size()
 
+  /**
+   * For AAC - returns, in an array of Strings, all keys in a given AssociativeArray.
+   */
+public String[] getAllKeys() {
+  String[] keys = new String[this.size];
+  if (keys.length > 0) {
+    for (int i = 0; i < this.size; i++) {
+      keys[i] = (String) this.pairs[i].key;
+    }
+  }
+  return keys;
+}
+
   // +-----------------+---------------------------------------------
   // | Private Methods |
   // +-----------------+
