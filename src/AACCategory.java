@@ -17,24 +17,23 @@ public class AACCategory {
 
   // Methods
   void addItem(String imageLoc, String text) {
-
+    // STUB
   } // addItem(String, String)
 
   String getCategory() {
-    return "Not yet implemented";
+    return "Not yet implemented";    // STUB
   } // getCategory()
 
   String[] getImages() {
-    String[] ret = new String[] {""};
+    String[] ret = new String[] {""};    // STUB
     return ret;
   } // getImages()
 
   String getText(String imageLoc) {
-    return "Not yet implemented";
+    return "Not yet implemented";    // STUB
   } // getText(String)
 
   boolean hasImage(String imageLoc) {
-    return false;
+    return false;    // STUB
   } // hasImage(String)
-  
 } // AACCategory
