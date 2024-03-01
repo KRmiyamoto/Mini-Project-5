@@ -3,13 +3,12 @@
  * @author Keely Miyamoto
  */
 
-import java.util.*;
-
 import structures.AssociativeArray;
 import structures.KeyNotFoundException;
 import structures.NullKeyException;
-
-import static java.lang.reflect.Array.newInstance;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 public class AACMappings {
   // Fields
@@ -18,10 +17,28 @@ public class AACMappings {
   AssociativeArray<String, AACCategory> categoryPairs;
 
   // Constructors
+  /**
+   * This method should read in the file and create the relevant mappings 
+   * from images to categories and add all the items to each category. 
+   * It should also start the AAC on the home screen
+   * 
+   * @param filename -  In the file, the first line will represent the category. 
+   * It will have the file location first (will be one "word") and then the 
+   * category name. Then each of the items that is in the category will follow 
+   * and the line will start with a ">". The line will then have the file location
+   * (will be one "word") and then the text to speak. 
+   */
   public AACMappings(String filename) {
-    this.currentCategory = new AACCategory();
-    this.categoryPairs = new AssociativeArray<String, AACCategory>();
-    this.currentName = "";
+    // Use 'eyes' to read in user input.
+    try {
+      BufferedReader eyes = new BufferedReader(new FileReader(filename));
+      this.currentCategory = new AACCategory("");
+      this.categoryPairs = new AssociativeArray<String, AACCategory>();
+      this.currentName = "";
+      
+    } catch (FileNotFoundException f) {
+      throw new Error("The file " + filename + " was not found.");
+    }
   } // AACMappings(String)
 
   // Methods
