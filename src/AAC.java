@@ -24,7 +24,7 @@ import javax.speech.synthesis.Synthesizer;
 import javax.speech.synthesis.SynthesizerModeDesc;
 
 /**
- * Creates a GUI that has a grid of images that represent the communication
+ * Creates a GUI that has a grid of images that r7epresent the communication
  * device of the AAC.
  * 
  * @author Catie Baker
@@ -39,7 +39,7 @@ public class AAC implements ActionListener {
 	private static final int NUM_ACROSS = 3;
 	private static final int NUM_DOWN = 3;
 	private String[] images;
-	private AACPage page;
+	private AACMappings page;
 	private Scanner input;
 
 	/**
@@ -78,8 +78,8 @@ public class AAC implements ActionListener {
 		topPanel.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		String category = "Home Page";
-		if (!this.page.getCategory().equals("")) {
-			category = this.page.getCategory();
+		if (!this.page.getCurrentCategory().equals("")) {
+			category = this.page.getCurrentCategory();
 		}
 		c.gridx = 0;
 		c.gridy = 0;
@@ -197,7 +197,7 @@ public class AAC implements ActionListener {
 				String result = (String) JOptionPane.showInputDialog(frame, "What is the text?", "AAC Add",
 						JOptionPane.PLAIN_MESSAGE, null, null, "");
 				if (result != null && result.length() > 0) {
-					this.page.addItem(imageLoc, result);
+					this.page.add(imageLoc, result);
 				}
 			}
 			this.images = this.page.getImageLocs();
@@ -209,14 +209,14 @@ public class AAC implements ActionListener {
 			this.startIndex = 0;
 			this.endIndex = Math.min(NUM_ACROSS * NUM_DOWN, this.images.length);
 		} else {
-			if (this.page.getCategory().equals("")) {
-				this.page.select(actionCommand);
+			if (this.page.getCurrentCategory().equals("")) {
+				this.page.getText(actionCommand);
 				this.images = this.page.getImageLocs();
 				this.startIndex = 0;
 				this.endIndex = Math.min(NUM_ACROSS * NUM_DOWN, this.images.length);
 			} else {
 				try {
-					String toSpeak = this.page.select(actionCommand);
+					String toSpeak = this.page.getText(actionCommand);
 					synthesizer.speakPlainText(toSpeak, null);
 					synthesizer.waitEngineState(Synthesizer.QUEUE_EMPTY);
 				} catch (Exception e1) {

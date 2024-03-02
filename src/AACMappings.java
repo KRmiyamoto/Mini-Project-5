@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public class AACMappings {
   // Fields
@@ -74,7 +75,22 @@ public class AACMappings {
    * @param text - the text associated with the image
    */
   void add(String imageLoc, String text) {
-    this.currentCategory.addItem(imageLoc, text);
+    try {
+      if (this.getCurrentCategory().equals("")) {
+        this.homePage.addItem(imageLoc, text);
+        this.categoryPairs.set(text, new AACCategory(text));
+      } else {
+        boolean foundCategory = false;
+        int index = 0;
+        while (!foundCategory && (index < this.categoryPairs.size())) {
+          if (this.categoryPairs.getKey(index).equals(this.getCurrentCategory())) {
+            this.categoryPairs.getVal(index).addItem(imageLoc, text);
+            foundCategory = true;
+          } // if
+          index++;
+        } // while
+      } // if
+    } catch (Exception e) {}
   } // add(String, String)
 
   /**
@@ -83,7 +99,7 @@ public class AACMappings {
    * or the empty string if on the default category
    */
   String getCurrentCategory() {
-    return "food";  // STUB
+    return this.currentName;
   } // getCurrentCategory()
 
   /**
@@ -91,7 +107,7 @@ public class AACMappings {
    * @return - the array of images in the current category
    */
   String[] getImageLocs() {
-    return new String[] { "img/food/icons8-french-fries-96.png", "img/food/icons8-watermelon-96.png" }; // STUB
+    return this.currentCategory.getImages();
   } // getImageLoc()
 
   /**
@@ -103,7 +119,17 @@ public class AACMappings {
    * @return - the text associated with the current image
    */
   String getText(String imageLoc) {
-    return "television";  // STUB
+    if (this.getCurrentCategory().equals("")) {
+      this.currentName = this.homePage.getText(imageLoc);
+      return this.currentName;
+    } else {
+      for (int i = 0; i < this.categoryPairs.size(); i++) {
+        if (this.getCurrentCategory().equals(this.categoryPairs.getKey(i))) {
+          return this.categoryPairs.getVal(i).getText(imageLoc);
+        } // if
+      } // for
+    } // else
+    throw new Error("Text associated with the given image not found.");
   } // getText(String)
 
   /**
@@ -113,14 +139,15 @@ public class AACMappings {
    * false if the image represents text to speak
    */
   boolean isCategory(String imageLoc) {
-    return false;    // STUB
+    return this.homePage.hasImage(imageLoc);
   } // isCategory(String)
 
   /**
    * Resets the current category of the AAC back to the default category
    */
   void reset() {
-    // STUB
+    this.currentCategory = this.homePage;
+    this.currentName = "";
   } // reset()
 
   /**
@@ -129,7 +156,21 @@ public class AACMappings {
    * category and then one line per item in the category that starts with
    * > and then has the file name and text of that image
    */
-  void writeToFile(String filename) {
-    // STUB
+   void writeToFile(String filename) {
+    String[] filenames;
+    try {
+      PrintWriter pen = new PrintWriter(filename);
+      
+      for (int i = 0; i < this.categoryPairs.size(); i++) {
+        pen.println(this.categoryPairs.getKey(i) + " " + this.categoryPairs.getVal(i).getCategory());
+        filenames = this.categoryPairs.getVal(i).getImages();
+       
+        for (int j = 0; j < filenames.length; i++) {
+          pen.println(">" + filenames[j] + " " + this.categoryPairs.getVal(i).getText(filenames[j]));
+        } // for
+      } // for
+    pen.flush();
+    } catch (Exception e) {}
   } // writeToFile(String)
+
 } // AACMappings

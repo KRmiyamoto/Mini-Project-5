@@ -191,6 +191,28 @@ public class AssociativeArray<K, V> {
   } // size()
 
   /**
+   * For AAC - get a value at a given index.
+   */
+  public V getVal(int i) {
+    if (i >= this.pairs.length || this.pairs[i] == null) {
+      return null;
+    } else {
+      return this.pairs[i].value;
+    } // if
+  } // getVal(i)
+
+  /**
+   * For AAC - get a key at a given index.
+   */
+  public K getKey(int i) {
+    if (i >= this.pairs.length || this.pairs[i] == null) {
+      return null;
+    } else {
+      return this.pairs[i].key;
+    } // if
+  } // getKey(i)
+
+  /**
    * For AAC - returns, in an array of Strings, all keys in a given AssociativeArray.
    */
 public String[] getAllKeys() {
@@ -201,7 +223,7 @@ public String[] getAllKeys() {
     }
   }
   return keys;
-}
+} // getAllKeys()
 
   // +-----------------+---------------------------------------------
   // | Private Methods |
