@@ -9,11 +9,13 @@ import structures.NullKeyException;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 
 public class AACMappings {
   // Fields
   String currentName;
   AACCategory currentCategory;
+  AACCategory homePage;
   AssociativeArray<String, AACCategory> categoryPairs;
 
   // Constructors
@@ -32,40 +34,101 @@ public class AACMappings {
     // Use 'eyes' to read in user input.
     try {
       BufferedReader eyes = new BufferedReader(new FileReader(filename));
-      this.currentCategory = new AACCategory("");
+      this.homePage = new AACCategory("");
+      this.currentCategory = this.homePage;
       this.categoryPairs = new AssociativeArray<String, AACCategory>();
       this.currentName = "";
       
+      String line = eyes.readLine();
+      while (line != null) {
+        String[] lineContents = line.split(" ");
+
+        if(line.charAt(0) != '>') {
+          this.homePage.addItem(lineContents[0], lineContents[1]);
+          try {
+            this.categoryPairs.set(lineContents[0], new AACCategory(lineContents[1]));
+            this.currentCategory = this.categoryPairs.get(lineContents[0]);
+          } catch (Exception e) {
+            throw new Error("Error setting/getting desired key.");
+          }
+        } else {
+          String imageLoc = lineContents[0].substring(1);
+          this.currentCategory.addItem(imageLoc, lineContents[1]);
+        }
+      line = eyes.readLine();
+      } // while
+      eyes.close();
     } catch (FileNotFoundException f) {
       throw new Error("The file " + filename + " was not found.");
+    } catch (IOException i) {
+      throw new Error("Failed to read in file contents.");
     }
+    this.currentName = "";
   } // AACMappings(String)
 
   // Methods
+  /**
+   * Adds the mapping to the current category 
+   * (or the default category if that is the current category)
+   * @param imageLoc - the location of the image
+   * @param text - the text associated with the image
+   */
   void add(String imageLoc, String text) {
-    // STUB
+    this.currentCategory.addItem(imageLoc, text);
   } // add(String, String)
 
+  /**
+   * Gets the current category
+   * @return - returns the current category, 
+   * or the empty string if on the default category
+   */
   String getCurrentCategory() {
     return "food";  // STUB
   } // getCurrentCategory()
 
+  /**
+   * Provides an array of all the images in the current category
+   * @return - the array of images in the current category
+   */
   String[] getImageLocs() {
     return new String[] { "img/food/icons8-french-fries-96.png", "img/food/icons8-watermelon-96.png" }; // STUB
   } // getImageLoc()
 
+  /**
+   * Given the image location selected, it determines the 
+   * associated text with the image. If the image provided is a 
+   * category, it also updates the AAC's current category to be 
+   * the category associated with that image.
+   * @param imageLoc - the location where the image is stored
+   * @return - the text associated with the current image
+   */
   String getText(String imageLoc) {
     return "television";  // STUB
   } // getText(String)
 
+  /**
+   * Determines if the image represents a category or text to speak
+   * @param imageLoc - the location where the image is stored
+   * @return - true if the image represents a category, 
+   * false if the image represents text to speak
+   */
   boolean isCategory(String imageLoc) {
     return false;    // STUB
   } // isCategory(String)
 
+  /**
+   * Resets the current category of the AAC back to the default category
+   */
   void reset() {
     // STUB
   } // reset()
 
+  /**
+   * Writes the ACC mappings stored to a file. The file is formatted as 
+   * the text location of the category followed by the text name of the 
+   * category and then one line per item in the category that starts with
+   * > and then has the file name and text of that image
+   */
   void writeToFile(String filename) {
     // STUB
   } // writeToFile(String)
