@@ -6,15 +6,14 @@
 import structures.AssociativeArray;
 import structures.KeyNotFoundException;
 import structures.NullKeyException;
-import java.io.BufferedReader;
+import java.util.Arrays;
+import java.util.Scanner;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.File;
 import java.io.PrintWriter;
 
 public class AACMappings {
   // Fields
-  String currentName;
   AACCategory currentCategory;
   AACCategory homePage;
   AssociativeArray<String, AACCategory> categoryPairs;
@@ -32,19 +31,19 @@ public class AACMappings {
    * (will be one "word") and then the text to speak. 
    */
   public AACMappings(String filename) {
+    this.homePage = new AACCategory("");
+    this.currentCategory = this.homePage;
+    this.categoryPairs = new AssociativeArray<String, AACCategory>();
+
     // Use 'eyes' to read in user input.
     try {
-      BufferedReader eyes = new BufferedReader(new FileReader(filename));
-      this.homePage = new AACCategory("");
-      this.currentCategory = this.homePage;
-      this.categoryPairs = new AssociativeArray<String, AACCategory>();
-      this.currentName = "";
+      Scanner eyes = new Scanner(new File(filename));
       
-      String line = eyes.readLine();
-      while (line != null) {
+      while (eyes.hasNextLine()) {
+        String line = eyes.nextLine();
         String[] lineContents = line.split(" ");
 
-        if(line.charAt(0) != '>') {
+        if(!line.startsWith(">")) {
           this.homePage.addItem(lineContents[0], lineContents[1]);
           try {
             this.categoryPairs.set(lineContents[0], new AACCategory(lineContents[1]));
@@ -56,15 +55,12 @@ public class AACMappings {
           String imageLoc = lineContents[0].substring(1);
           this.currentCategory.addItem(imageLoc, lineContents[1]);
         }
-      line = eyes.readLine();
       } // while
       eyes.close();
+      this.currentCategory = this.homePage;
     } catch (FileNotFoundException f) {
       throw new Error("The file " + filename + " was not found.");
-    } catch (IOException i) {
-      throw new Error("Failed to read in file contents.");
-    }
-    this.currentName = "";
+    } 
   } // AACMappings(String)
 
   // Methods
@@ -99,7 +95,7 @@ public class AACMappings {
    * or the empty string if on the default category
    */
   String getCurrentCategory() {
-    return this.currentName;
+    return this.currentCategory.getCategory();
   } // getCurrentCategory()
 
   /**
@@ -119,17 +115,14 @@ public class AACMappings {
    * @return - the text associated with the current image
    */
   String getText(String imageLoc) {
-    if (this.getCurrentCategory().equals("")) {
-      this.currentName = this.homePage.getText(imageLoc);
-      return this.currentName;
-    } else {
-      for (int i = 0; i < this.categoryPairs.size(); i++) {
-        if (this.getCurrentCategory().equals(this.categoryPairs.getKey(i))) {
-          return this.categoryPairs.getVal(i).getText(imageLoc);
-        } // if
-      } // for
-    } // else
-    throw new Error("Text associated with the given image not found.");
+    try {
+      if (this.getCurrentCategory().equals("")) {
+        this.currentCategory = this.categoryPairs.get(imageLoc);
+        return this.homePage.getText(imageLoc);
+      } else {
+        return this.currentCategory.getText(imageLoc);
+      } // else
+    } catch (Exception e) {throw new Error("Failure to retrieve given image location.");}
   } // getText(String)
 
   /**
@@ -147,7 +140,6 @@ public class AACMappings {
    */
   void reset() {
     this.currentCategory = this.homePage;
-    this.currentName = "";
   } // reset()
 
   /**
@@ -158,18 +150,19 @@ public class AACMappings {
    */
    void writeToFile(String filename) {
     String[] filenames;
+    String[] texts;
     try {
       PrintWriter pen = new PrintWriter(filename);
-      
       for (int i = 0; i < this.categoryPairs.size(); i++) {
         pen.println(this.categoryPairs.getKey(i) + " " + this.categoryPairs.getVal(i).getCategory());
         filenames = this.categoryPairs.getVal(i).getImages();
+        texts = this.categoryPairs.getVal(i).getTexts();
        
-        for (int j = 0; j < filenames.length; i++) {
-          pen.println(">" + filenames[j] + " " + this.categoryPairs.getVal(i).getText(filenames[j]));
+        for (int j = 0; j < filenames.length; j++) {
+          pen.println(">" + filenames[j] + " " + texts[j]);
         } // for
       } // for
-    pen.flush();
+    pen.close();
     } catch (Exception e) {}
   } // writeToFile(String)
 

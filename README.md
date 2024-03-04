@@ -14,3 +14,4 @@ Resources:
 -https://github.com/catiembaker/AACNestedHW (Starter code.)
 -https://accessibilityeducation.github.io/assignments/AAC/AACCategory.html (Documentation for AACCategory class.)
 -https://accessibilityeducation.github.io/assignments/AAC/AACMappings.html (Documentation for AACMappings class.)
+-https://docs.oracle.com/javase/8/docs/api/java/util/Scanner.html (Documentation for Scanner class methods.)

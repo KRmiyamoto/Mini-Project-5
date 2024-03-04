@@ -62,6 +62,18 @@ public class AACCategory {
     }
   } // getText(String)
 
+    /**
+   * Returns all texts associated with this AACCategory
+   * @return - the texts associated with the AACCategory
+   */
+  String[] getTexts() {
+    String[] texts = new String[this.itemMappings.size()];
+    for (int i = 0; i < texts.length; i++) {
+      texts[i] = this.itemMappings.getVal(i);
+    }
+    return texts;
+  } // getText(String)
+
   /**
    * Determines if the provided images is stored in the category
    * @param imageLoc - the location of the category
