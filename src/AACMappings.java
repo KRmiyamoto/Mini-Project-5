@@ -2,7 +2,6 @@
  * Class to keep track of the complete set of AAC mappings.
  * @author Keely Miyamoto
  */
-
 import structures.AssociativeArray;
 import structures.KeyNotFoundException;
 import structures.NullKeyException;
@@ -16,6 +15,7 @@ public class AACMappings {
   // Fields
   AACCategory currentCategory;
   AACCategory homePage;
+  // Keeps track of file location (String) and AACCategory
   AssociativeArray<String, AACCategory> categoryPairs;
 
   // Constructors
@@ -31,32 +31,37 @@ public class AACMappings {
    * (will be one "word") and then the text to speak. 
    */
   public AACMappings(String filename) {
+    // Initialize homePage, set currentCategory to homePage, and initialize categoryPairs AssociativeArray
     this.homePage = new AACCategory("");
     this.currentCategory = this.homePage;
     this.categoryPairs = new AssociativeArray<String, AACCategory>();
 
-    // Use 'eyes' to read in user input.
+    // Use Scanner 'eyes' to read in file input.
     try {
       Scanner eyes = new Scanner(new File(filename));
-      
+      // While there are more lines in the file, read in the next line and split around " "
       while (eyes.hasNextLine()) {
         String line = eyes.nextLine();
         String[] lineContents = line.split(" ");
 
+        // If line is a category (does not start with ">"), add to homePage and categoryPairs. 
         if(!line.startsWith(">")) {
           this.homePage.addItem(lineContents[0], lineContents[1]);
           try {
             this.categoryPairs.set(lineContents[0], new AACCategory(lineContents[1]));
+            // Update currentCateory 
             this.currentCategory = this.categoryPairs.get(lineContents[0]);
           } catch (Exception e) {
             throw new Error("Error setting/getting desired key.");
           }
+        // If line is within a category, remove ">" and add to currentCategory
         } else {
           String imageLoc = lineContents[0].substring(1);
           this.currentCategory.addItem(imageLoc, lineContents[1]);
-        }
+        } // else
       } // while
       eyes.close();
+      // Set currentCategory to homePage.
       this.currentCategory = this.homePage;
     } catch (FileNotFoundException f) {
       throw new Error("The file " + filename + " was not found.");
@@ -72,20 +77,14 @@ public class AACMappings {
    */
   void add(String imageLoc, String text) {
     try {
+      // If the current category is homePage, addItem to homePage and update categoryPairs.
       if (this.getCurrentCategory().equals("")) {
         this.homePage.addItem(imageLoc, text);
-        this.categoryPairs.set(text, new AACCategory(text));
+        this.categoryPairs.set(imageLoc, new AACCategory(text));
+      // Otherwise, addItem to currentCategory
       } else {
-        boolean foundCategory = false;
-        int index = 0;
-        while (!foundCategory && (index < this.categoryPairs.size())) {
-          if (this.categoryPairs.getKey(index).equals(this.getCurrentCategory())) {
-            this.categoryPairs.getVal(index).addItem(imageLoc, text);
-            foundCategory = true;
-          } // if
-          index++;
-        } // while
-      } // if
+        this.currentCategory.addItem(imageLoc, text);
+      } // else
     } catch (Exception e) {}
   } // add(String, String)
 
@@ -116,9 +115,11 @@ public class AACMappings {
    */
   String getText(String imageLoc) {
     try {
+      // If current category is homePage, set currentCategory to ACCCateogry associated with 'imageLoc'
       if (this.getCurrentCategory().equals("")) {
         this.currentCategory = this.categoryPairs.get(imageLoc);
         return this.homePage.getText(imageLoc);
+      // Otherwise, return the text associated with 'imageLoc' in the currentCategory
       } else {
         return this.currentCategory.getText(imageLoc);
       } // else
@@ -136,7 +137,7 @@ public class AACMappings {
   } // isCategory(String)
 
   /**
-   * Resets the current category of the AAC back to the default category
+   * Resets 'currentCategory' of the AAC back to the default category (homePage)
    */
   void reset() {
     this.currentCategory = this.homePage;
@@ -149,15 +150,18 @@ public class AACMappings {
    * > and then has the file name and text of that image
    */
    void writeToFile(String filename) {
+    // Declare respective String arrays for the filenames and texts of ACC mappings.
     String[] filenames;
     String[] texts;
     try {
+      // Initialize PrintWriter pen to write to filename
       PrintWriter pen = new PrintWriter(filename);
+      // For each index in categoryPairs, print the imageLoc of the cateogry and its text
       for (int i = 0; i < this.categoryPairs.size(); i++) {
         pen.println(this.categoryPairs.getKey(i) + " " + this.categoryPairs.getVal(i).getCategory());
         filenames = this.categoryPairs.getVal(i).getImages();
         texts = this.categoryPairs.getVal(i).getTexts();
-       
+        // Then, print each image filename, followed by its associated text.
         for (int j = 0; j < filenames.length; j++) {
           pen.println(">" + filenames[j] + " " + texts[j]);
         } // for

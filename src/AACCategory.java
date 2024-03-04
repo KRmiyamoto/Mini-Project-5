@@ -68,6 +68,7 @@ public class AACCategory {
    */
   String[] getTexts() {
     String[] texts = new String[this.itemMappings.size()];
+    // Set each index in texts array to the ith value in itemMappings.
     for (int i = 0; i < texts.length; i++) {
       texts[i] = this.itemMappings.getVal(i);
     }
